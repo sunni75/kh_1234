@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.FileDetailMapper">
+
+	<select id="detailFileExist"
+		parameterType="Long"
+		resultType="com.example.demo.vo.FileDetailVO"
+	>
+		-- detailFileExist
+		SELECT 
+			*
+		FROM FILE_DETAIL
+			WHERE FILE_DETAIL_ID = #{fileDetailId}
+	</select>
+	
+	<delete id="deleteFileByFileDetailId" parameterType="Long">
+		-- deleteFileByFileDetailId
+		DELETE FROM FILE_DETAIL WHERE FILE_DETAIL_ID = #{fileDetailId}
+	</delete>
+	
+	<select id="selectFileByMstId" parameterType="Long" resultType="com.example.demo.vo.FileDetailVO">
+	SELECT * FROM FILE_DETAIL
+	WHERE FILE_MST_ID = #{fileMstId}
+	</select>
+
+
+	<select 
+	id="selectFileByFileDetailId" 
+	parameterType="com.example.demo.vo.FileDetailVO"
+	resultType="com.example.demo.vo.FileDetailVO">
+		SELECT 
+			*
+		FROM FILE_DETAIL
+		WHERE FILE_DETAIL_ID = #{fileDetailId}
+			AND FILE_MST_ID = #{fileMstId}  
+	</select>
+
+	<insert 
+		id="insertDetailFile"
+		parameterType="com.example.demo.vo.FileDetailVO"
+		useGeneratedKeys="true"
+		keyColumn="FILE_DETAIL_ID"
+		keyProperty="fileDetailId"
+	>
+	INSERT INTO FILE_DETAIL (
+		FILE_MST_ID
+		, FILE_DEST
+		, FILE_NUMBER
+		, FILE_LOCATION
+		, FILE_PATH
+		, FILE_NAME
+		, ORG_FILE_NAME
+		, FILE_EXT
+		, FILE_MIME
+		, FILE_SIZE
+		, REG_ID
+	) VALUES (
+		#{fileMstId}
+		, #{fileDest}
+		, #{fileNumber}
+		, #{fileLocation}
+		, #{filePath}
+		, #{fileName}
+		, #{orgFileName}
+		, #{fileExt}
+		, #{fileMiMe}
+		, #{fileSize}
+		, #{regID}
+	)
+	</insert>
+
+</mapper>

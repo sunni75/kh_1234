@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- th:text : 텍스트 출력 -->
+	<title th:text="${title}"></title>
+</head>
+<body>
+	<!-- th:utext : HTML 태그 포함 내용 출력 -->
+	<div th:utext="${htmlTag}"></div>
+	<!-- th: 속성으로 타임리프에서 출력하게 지정 -->
+	<input type="text" th:value="${title}" />
+	<p th:text="${age}"></p>
+	
+	<!-- if else : if unless -->
+	<p th:if="${age < 30}">30세 이하</p>
+	<p th:unless="${age < 30}">30세 이상</p>
+	
+	<!-- Object 출력 -->
+	<p th:text="${memberVO.userID}"></p>
+	<p th:text="${memberVO.username}"></p>
+	
+	<!-- list 출력 -->
+	<table>
+		<tr th:each="memberVO : ${list}">
+			<td th:text="|${memberVO.userID} : ${memberVO.username}|"></td>
+			<td th:text="|이름 : ${memberVO.username}|"></td>
+		</tr>
+	</table>
+	
+	<!-- a태그에 파라미터 표기 -->
+	<div th:each="memberVO : ${list}">
+		<a th:href="@{/member/info/{userID}(userID=${memberVO.userID})}">경로 파라미터</a>
+	</div>
+	
+	<!-- 예 : P태그에 내용만 출력하고 싶은데 div 태그와 같이 뭔가 하나 더 감싸고 싶지 않은 경우 -->
+	<th:block th:utext="${htmlTag}"></th>
+	
+</body>
+</html>

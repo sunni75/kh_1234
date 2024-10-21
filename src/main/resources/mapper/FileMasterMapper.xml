@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.FileMasterMapper">
+
+	<insert 
+		id="insertFileMaster"
+		parameterType="com.example.demo.vo.FileMasterVO"
+		useGeneratedKeys="true"
+		keyColumn="FILE_MST_ID"
+		keyProperty="fileMstId"
+	>
+	INSERT INTO FILE_MASTER (REGID) VALUES (#{regID})
+	</insert>
+
+</mapper>

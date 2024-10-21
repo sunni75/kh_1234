@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title></title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+</head>
+<body>
+	<header th:replace="~{fragments/header :: header}"></header>
+	
+	<main>
+		<h2 id="title"></h2>
+		<p id="regDate"></p>
+		<p id="regID"></p>
+		<p id="content"></p>
+		
+		<div id="file-container"></div>
+		
+		<a href="/board/list">목록</a>
+		<a th:href="@{/board/modify(idx=${idx})}">수정</a>
+		<button type="button">삭제</button>
+	</main>
+	
+	
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+	
+	<script th:inline="javascript">
+		const idx = /*[[${idx}]]*/;
+		
+		// axios를 이용해서 해당 게시물을 불러오고 html에 출력한다.
+		axios.get(`/api/board/view/${idx}`)
+		.then(res => {
+			const {data} = res;
+			console.log(data);
+			document.querySelector('#title').innerHTML = data.title;
+			document.querySelector('#regID').innerHTML = data.regID;
+			document.querySelector('#regDate').innerHTML = data.regDate;
+			document.querySelector('#content').innerHTML = data.content;
+			
+			const fileContainer = document.querySelector('#file-container');
+			
+			// data -> fileMasterVO -> fileList
+			const {fileList} = data?.fileMasterVO;
+			console.log(fileList)
+			fileList.forEach(file => {
+				// 이미지일 경우 img 태그 생성 후 fileContainer에 appendChild
+				if(file.fileMiMe.startsWith('image/')) {
+					console.log('이미지다')
+					const img = document.createElement('img');
+					img.src = `/api/file/viewById?fileDetailId=${file.fileDetailId}&fileMstId=${file.fileMstId}`;
+					img.style.width = '200px';
+					img.style.height = 'auto';
+					fileContainer.appendChild(img);
+				} else {
+					// 이미지가 아닐 경우 a 태그를 만들어서 fileContainer에 appendChild
+					console.log('이미지가 아니다.')
+					const link = document.createElement('a');
+					link.href = `/api/file/viewById?fileDetailId=${file.fileDetailId}&fileMstId=${file.fileMstId}`;
+					link.innerText = file.orgFileName
+;
+					link.target = '_blank';
+					fileContainer.appendChild(link);
+				}
+			});
+		})
+		
+	</script>
+</body>
+</html>

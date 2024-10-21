@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title></title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header th:replace="~{fragments/header :: header}"></header>
+	
+	<main>
+		<form id="writeForm">
+			<input type="hidden" id="cate" value="1000" readonly />
+			<input type="hidden" id="fileMstId" th:value="${fileMasterId}" readonly />
+			<div>
+				<label for="title">제목</label>
+				<input type="text" id="title" />
+			</div>
+			<div>
+				<label for="content">내용</label>
+				<input type="text" id="content" />
+			</div>
+			<div>
+				<label for="file">파일</label>
+				<input type="file" id="file" />
+			</div>
+			<button type="button" id="btnSave">저장</button>
+			<a href="/board/list">취소</a>
+		</form>
+		<div id="imageResult">
+			<img src="" id="img" />
+		</div>
+	</main>
+	
+	<script>
+		document.querySelector('#file')
+		.addEventListener('change', function(e){
+			console.log(e.target.files);
+			// FormData로 object 생성
+			const formData = new FormData();
+			formData.append('file', e.target.files[0]);
+			formData.append('fileMstId', document
+								.querySelector('#fileMstId').value);
+			formData.append('fileDest', '1111');
+			// axios를 써서 서버에 던진다.
+			axios.post('/api/file/save', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			}).then(res => {
+				// res.data.data ---> 5
+				const {data, success} = res.data
+				// /api/file/viewById?fileDetailId=번호&fileMstId=번호
+				document.querySelector('#imageResult #img').src = `/api/file/viewById?fileDetailId=${data}&fileMstId=1`;
+			});
+		});
+		
+		
+		document.querySelector('#btnSave').addEventListener('click', function(){
+			// axios post
+			axios.post('/api/board/insert', {
+					cate: document.querySelector('#cate').value,
+					title: document.querySelector('#title').value,
+					content: document.querySelector('#content').value,
+					fileMstId: document
+					.querySelector('#fileMstId').value
+				})
+				.then((res) => {
+					console.log(res);
+					const {data, success} = res.data;
+					if (success) {
+						alert('저장 되었습니다.');
+						window.location.href = `/board/view/${data}`;
+					}
+					
+				})
+				.catch((error) => {
+					const {data} = error.response;
+					console.log(data);
+					if (data.data) alert(data.data);
+				})
+				.finally(() => {
+					// do something
+				});
+		});
+	</script>
+	
+	
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

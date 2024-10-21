@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title></title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+</head>
+<body>
+	
+	<header th:replace="~{fragments/header :: header}"></header>
+	
+	<style>
+		table {
+			width: 100%;
+		}
+	</style>
+	
+	<main>
+		<table>
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>분류</th>
+					<th>제목</th>
+					<th>등록자ID</th>
+					<th>등록일</th>
+				</tr>
+			</thead>
+			<tbody id="tbody"></tbody>
+		</table>
+	</main>
+	
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+	
+	<script>
+		
+	function cateToStr(cate) {
+		switch (cate) {
+			case 1000:
+				return "공지사항";
+			case 2000:
+				return "자유게시판";
+			case 3000:
+				return "갤러리게시판";
+		}
+	}
+		
+	axios.get('http://localhost:8111/api/board/list?cate=1000&title=')
+		.then((response) => {
+			// 응답 받는 JSON에서 data 만 추출
+			const { data } = response;
+			// data를 loop 돌려서 html을 생성한다.
+			let html = '';
+			data.forEach(item => {
+				console.log(item);
+				html += `
+					<tr>
+						<td>${item.idx}</td>
+						<td>${cateToStr(item.cate)}</td>
+						<td><a href="/board/view/${item.idx}">${item.title}</a></td>
+						<td>${item.regID}</td>
+						<td>${item.regDate}</td>
+					</tr>
+				`;
+			});
+			document.querySelector('#tbody').innerHTML = html;
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+		.finally(() => {
+			console.log('done');
+		});
+		
+	</script>
+	
+	
+</body>
+</html>
